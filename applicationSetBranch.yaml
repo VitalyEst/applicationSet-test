@@ -72,7 +72,7 @@ spec:
       source:
         repoURL: https://github.com/VitalyEst-org/applicationSet-test.git
         targetRevision: '{{ branch }}'
-        path: applicationSetBranch
+        path: applicationSetBranch/chart1
         helm:
           values: |
             fullnameOverride: "{{branchNormalized}}"
