@@ -58,7 +58,7 @@ spec:
   generators:
   - scmProvider:
       github:
-        organization: VitalyEst
+        organization: VitalyEst-org
       cloneProtocol: https
       filters:
       - repositoryMatch: applicationSet-test
@@ -69,7 +69,7 @@ spec:
     spec:
       project: "default"
       source:
-        repoURL: https://github.com/VitalyEst/applicationSet-test.git
+        repoURL: https://github.com/VitalyEst-org/applicationSet-test.git
         targetRevision: '{{ branch }}'
         path: applicationSetBranch
         helm:
@@ -78,3 +78,10 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: application-set-branch
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+          allowEmpty: true
+        syncOptions:
+          - CreateNamespace=true
