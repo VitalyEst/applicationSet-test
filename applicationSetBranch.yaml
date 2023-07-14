@@ -53,6 +53,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: application-set-branch
+  namespace: argo-cd
 spec:
   generators:
   - scmProvider:
