@@ -59,6 +59,7 @@ spec:
   - scmProvider:
       github:
         organization: VitalyEst-org
+        allBranches: true
       cloneProtocol: https
       filters:
       - repositoryMatch: applicationSet-test
