@@ -1,49 +1,79 @@
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: project-stack-dyn
+#   namespace: argo-cd
+# spec:
+#   generators:
+#     - scmProvider:
+#         cloneProtocol: git
+#         filters:
+#           - branchMatch: ^issue/.*
+#             repositoryMatch: manifests
+#         gitlab:
+#           group: "12345678" 
+#           allBranches: true
+#           includeSubgroups: true
+#           tokenRef:
+#             secretName: gitlab-token
+#             key: token
+#   template:
+#     metadata:
+#       name: "{{branchNormalized}}"
+#     spec:
+#       source:
+#         path: helm/
+#         repoURL: https://github.com/VitalyEst/applicationSet-test.git
+#         targetRevision: "{{branch}}"
+#         helm:
+#           values: |
+#             fullnameOverride: "{{branchNormalized}}"
+#             ingress:
+#               enabled: true
+#               annotations: {}
+#               hosts:
+#                 - host: {{branchNormalized}}.dyn.project.ru
+#                   paths:
+#                     - path: /
+#                       pathType: ImplementationSpecific
+#       project: project-dyn
+#       destination:
+#         namespace: 'argo-app-project-dyn'
+#         server: https://kubernetes.default.svc
+#       syncPolicy:
+#         automated:
+#           selfHeal: true
+#           prune: true
+#           allowEmpty: true
+#         syncOptions:
+#           - CreateNamespace=true
+
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: project-stack-dyn
-  namespace: argo-cd
+  name: application-set-branch
 spec:
   generators:
-    - scmProvider:
-        cloneProtocol: git
-        filters:
-          - branchMatch: ^issue/.*
-            repositoryMatch: manifests
-        gitlab:
-          group: "12345678" 
-          allBranches: true
-          includeSubgroups: true
-          tokenRef:
-            secretName: gitlab-token
-            key: token
+  - scmProvider:
+      github:
+        organization: VitalyEst
+      cloneProtocol: https
+      filters:
+      - repositoryMatch: applicationSet-test
+        branchMatch: ^issue/.*
   template:
     metadata:
       name: "{{branchNormalized}}"
     spec:
+      project: "default"
       source:
-        path: helm/
         repoURL: https://github.com/VitalyEst/applicationSet-test.git
-        targetRevision: "{{branch}}"
+        targetRevision: '{{ branch }}'
+        path: applicationSetBranch
         helm:
           values: |
             fullnameOverride: "{{branchNormalized}}"
-            ingress:
-              enabled: true
-              annotations: {}
-              hosts:
-                - host: {{branchNormalized}}.dyn.project.ru
-                  paths:
-                    - path: /
-                      pathType: ImplementationSpecific
-      project: project-dyn
       destination:
-        namespace: 'argo-app-project-dyn'
         server: https://kubernetes.default.svc
-      syncPolicy:
-        automated:
-          selfHeal: true
-          prune: true
-          allowEmpty: true
-        syncOptions:
-          - CreateNamespace=true
+        namespace: application-set-branch
